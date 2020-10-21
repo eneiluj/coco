@@ -14,6 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build project # This would actually build your project, using zip for an example artifact
+        id: build_release
         run: |
           mkdir -p ~/.nextcloud/certificates
           echo "###### copy"
@@ -27,8 +28,9 @@ jobs:
           make > /dev/null 2>&1
           echo "###### make appstore"
           tag=${{ github.ref }}
-          version=${tag/v/}
+          version=${tag/refs\/tags\/v/}
           sudo version=$version make appstore
+          echo "##[set-output name=version;]$version"
         env:
           APP_CRT: ${{ secrets.APP_CRT }}
           APP_KEY: ${{ secrets.APP_KEY }}
@@ -49,6 +51,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: /tmp/build/cospend-0.0.123.tar.gz
-          asset_name: cospend-0.0.123.tar.gz
+          asset_path: /tmp/build/cospend-${{ steps.build_release.outputs.version }}.tar.gz
+          asset_name: cospend-${{ steps.build_release.outputs.version }}.tar.gz
           asset_content_type: application/gzip
