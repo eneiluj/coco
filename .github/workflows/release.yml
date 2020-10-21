@@ -26,7 +26,9 @@ jobs:
           echo "###### make"
           make > /dev/null 2>&1
           echo "###### make appstore"
-          sudo version=0.0.123 make appstore
+          tag=${{ github.ref }}
+          version=${tag/v/}
+          sudo version=$version make appstore
         env:
           APP_CRT: ${{ secrets.APP_CRT }}
           APP_KEY: ${{ secrets.APP_KEY }}
