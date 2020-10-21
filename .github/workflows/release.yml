@@ -8,7 +8,7 @@ name: Upload Release Asset
 
 jobs:
   build:
-    name: Upload Release Asset
+    name: Build, upload and release in the appstore
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -35,6 +35,7 @@ jobs:
           sudo -u www-data php /var/www/html/nextcloud/occ app:enable cospend
           sudo -u www-data php /var/www/html/nextcloud/occ maintenance:mode --off
           cd cospend
+          sudo chown -R runner: ./
           echo "###### make"
           sudo make
           echo "###### make appstore"
