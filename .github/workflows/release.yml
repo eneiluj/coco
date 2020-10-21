@@ -20,12 +20,13 @@ jobs:
           sudo echo "$APP_CRT" > ~/.nextcloud/certificates/cospend.crt
           sudo echo "$APP_KEY" > ~/.nextcloud/certificates/cospend.key
           echo ###### install
-          sudo apt install npm make openssl
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt-get update -yqq
+          sudo apt-get install npm make openssl -yqq > /dev/null 2>&1
           echo ###### make
-          make
-          export version=0.0.123
+          make > /dev/null 2>&1
           echo ###### make appstore
-          sudo make appstore
+          version=0.0.123 sudo make appstore
         env:
           APP_CRT: ${{ secrets.APP_CRT }}
           APP_KEY: ${{ secrets.APP_KEY }}
