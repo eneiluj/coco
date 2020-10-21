@@ -37,7 +37,7 @@ jobs:
           cd cospend
           sudo chown -R runner: ./
           echo "###### make"
-          sudo make
+          sudo make > /dev/null 2>&1
           echo "###### make appstore"
           tag=${{ github.ref }}
           version=${tag/refs\/tags\/v/}
