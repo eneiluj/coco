@@ -1,4 +1,4 @@
-# Nextcloud      Cospend 💰
+# Nextcloud        Cospend 💰
 
 ![CI](https://github.com/eneiluj/cospend-nc/workflows/CI/badge.svg?branch=master&event=push)
 [![coverage report](https://github.com/eneiluj/cospend-nc/raw/gh-pages/coverage.svg)](https://eneiluj.github.io/cospend-nc/)
