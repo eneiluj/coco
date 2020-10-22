@@ -63,3 +63,10 @@ jobs:
           asset_path: /tmp/build/cospend-${{ steps.build_release.outputs.version }}.tar.gz
           asset_name: cospend-${{ steps.build_release.outputs.version }}.tar.gz
           asset_content_type: application/gzip
+
+      - name: Publish to appstore
+        id: publish
+        run: |
+          cat /tmp/build/sign.txt
+        env:
+          APPSTORE_TOKEN: ${{ secrets.APPSTORE_TOKEN }}
