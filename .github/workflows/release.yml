@@ -18,30 +18,30 @@ jobs:
         run: |
           echo "###### copy certificate"
           mkdir -p ~/.nextcloud/certificates
-          sudo echo "$APP_CRT" > ~/.nextcloud/certificates/cospend.crt
-          sudo echo "$APP_KEY" > ~/.nextcloud/certificates/cospend.key
+          echo "$APP_CRT" > ~/.nextcloud/certificates/cospend.crt
+          echo "$APP_KEY" > ~/.nextcloud/certificates/cospend.key
           echo "###### install dependencies"
           export DEBIAN_FRONTEND=noninteractive
           sudo apt-get update -yqq
           sudo apt-get install php7.4-mbstring php7.4-sqlite3 npm make openssl -yqq > /dev/null 2>&1
           echo "#### installing nextcloud"
-          sudo mkdir -p /var/www/html ; cd /var/www/html
-          sudo git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b stable20 nextcloud
-          sudo sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' nextcloud/lib/autoloader.php
-          sudo chown -R www-data:www-data nextcloud
-          cd nextcloud/apps
-          sudo cp -r $GITHUB_WORKSPACE ./cospend
-          sudo -u www-data php /var/www/html/nextcloud/occ maintenance:install --database "sqlite" --admin-user "admin" --admin-pass "password"
-          sudo -u www-data php /var/www/html/nextcloud/occ app:enable cospend
-          sudo -u www-data php /var/www/html/nextcloud/occ maintenance:mode --off
-          cd cospend
-          sudo chown -R runner: ./
+          mkdir ~/html
+          git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b stable20 ~/html/nextcloud
+          sed -i $'s|if (substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|if (is_string($root) and substr($fullPath, 0, strlen($root) + 1) === $root . \'/\')|g' ~/html/nextcloud/lib/autoloader.php
+          #sudo chown -R www-data:www-data nextcloud
+          #cd nextcloud/apps
+          cp -r $GITHUB_WORKSPACE ~/html/nextcloud/apps/cospend
+          php ~/html/nextcloud/occ maintenance:install --database "sqlite" --admin-user "admin" --admin-pass "password"
+          php ~/html/nextcloud/occ app:enable cospend
+          php ~/html/nextcloud/occ maintenance:mode --off
+          cd ~/html/nextcloud/apps/cospend
+          #sudo chown -R runner: ./
           echo "###### make"
-          sudo make > /dev/null 2>&1
+          webserveruser=runner occ_dir=~/html/nextcloud make
           echo "###### make appstore"
           tag=${{ github.ref }}
           version=${tag/refs\/tags\/v/}
-          sudo version=$version make appstore
+          webserveruser=runner occ_dir=~/html/nextcloud version=$version make appstore
           echo "##[set-output name=version;]$version"
         env:
           APP_CRT: ${{ secrets.APP_CRT }}
